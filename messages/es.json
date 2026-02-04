@@ -1,0 +1,262 @@
+{
+  "metadata": {
+    "title": "Teralife - Tu Bienestar, Mi Compromiso",
+    "description": "Descubre los productos Teralife que transformarán tu salud y bienestar. Asesoría personalizada y productos de nanotecnología para tu bienestar integral."
+  },
+  "common": {
+    "brandName": "Teralife",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "signOut": "Cerrar sesión",
+    "pointsBalance": "Balance de Puntos",
+    "points": "puntos",
+    "pts": "pts",
+    "user": "Usuario",
+    "admin": "Admin",
+    "fromLastMonth": "desde el mes pasado",
+    "contactMe": "Contáctame",
+    "learnMore": "Saber más",
+    "buyNow": "Comprar ahora",
+    "whatsapp": "WhatsApp"
+  },
+  "landing": {
+    "header": {
+      "about": "Sobre Mí",
+      "products": "Productos",
+      "benefits": "Beneficios",
+      "testimonials": "Testimonios",
+      "contact": "Contacto",
+      "logIn": "Iniciar Sesión",
+      "getStarted": "Únete al Equipo"
+    },
+    "hero": {
+      "greeting": "Hola, soy",
+      "name": "Charles Aguilera",
+      "role": "Asesor de Bienestar Teralife",
+      "description": "Te ayudo a transformar tu salud y bienestar con productos de nanotecnología de última generación. Mi misión es acompañarte en tu camino hacia una vida más saludable y plena.",
+      "ctaPrimary": "Contáctame por WhatsApp",
+      "ctaSecondary": "Ver Productos",
+      "stats": {
+        "clients": "Clientes Satisfechos",
+        "clientsValue": "500+",
+        "experience": "Años de Experiencia",
+        "experienceValue": "5+",
+        "products": "Productos Disponibles",
+        "productsValue": "20+"
+      }
+    },
+    "about": {
+      "title": "Sobre Mí",
+      "subtitle": "Conoce mi historia y mi pasión por el bienestar",
+      "bio": "Soy una apasionada del bienestar integral. Mi camino con Teralife comenzó cuando descubrí cómo estos productos transformaron mi propia salud. Desde entonces, me he dedicado a compartir estos beneficios con todos aquellos que buscan mejorar su calidad de vida.",
+      "mission": "Mi misión es brindarte asesoría personalizada para encontrar los productos que mejor se adapten a tus necesidades específicas.",
+      "values": {
+        "title": "Mis Valores",
+        "honesty": {
+          "title": "Honestidad",
+          "description": "Te asesoro con transparencia sobre los productos que realmente necesitas."
+        },
+        "commitment": {
+          "title": "Compromiso",
+          "description": "Te acompaño en todo tu proceso de bienestar."
+        },
+        "knowledge": {
+          "title": "Conocimiento",
+          "description": "Estoy constantemente capacitándome para ofrecerte la mejor información."
+        }
+      }
+    },
+    "products": {
+      "title": "Productos Teralife",
+      "subtitle": "Nanotecnología de vanguardia para tu bienestar integral",
+      "viewAll": "Ver catálogo completo",
+      "items": {
+        "teralife_gotas": {
+          "name": "Teralife Gotas",
+          "description": "Gotas de nanotecnología que apoyan la regeneración celular y el sistema inmunológico.",
+          "benefits": ["Fortalece el sistema inmune", "Mejora la energía y vitalidad", "Apoya la regeneración celular", "Ayuda a desintoxicar el organismo"]
+        },
+        "teralife_colageno": {
+          "name": "Teralife Colágeno",
+          "description": "Colágeno hidrolizado con nanotecnología para una absorción superior.",
+          "benefits": ["Mejora la elasticidad de la piel", "Fortalece articulaciones", "Cabello y uñas más fuertes", "Reducción de arrugas"]
+        },
+        "teralife_omega": {
+          "name": "Teralife Omega",
+          "description": "Omega 3 de alta pureza con tecnología de nanoencapsulación.",
+          "benefits": ["Salud cardiovascular", "Función cerebral óptima", "Reducción de inflamación", "Mejora el estado de ánimo"]
+        },
+        "teralife_magnesio": {
+          "name": "Teralife Magnesio",
+          "description": "Magnesio de alta biodisponibilidad para múltiples funciones corporales.",
+          "benefits": ["Relajación muscular", "Mejor calidad del sueño", "Reducción del estrés", "Función nerviosa saludable"]
+        },
+        "teralife_probioticos": {
+          "name": "Teralife Probióticos",
+          "description": "Probióticos avanzados para una flora intestinal equilibrada.",
+          "benefits": ["Salud digestiva", "Sistema inmune fuerte", "Mejor absorción de nutrientes", "Bienestar general"]
+        },
+        "teralife_vitamina_d": {
+          "name": "Teralife Vitamina D",
+          "description": "Vitamina D3 con K2 para una absorción óptima de calcio.",
+          "benefits": ["Huesos fuertes", "Sistema inmune", "Estado de ánimo positivo", "Salud muscular"]
+        }
+      }
+    },
+    "benefits": {
+      "title": "¿Por qué elegir Teralife?",
+      "subtitle": "Beneficios que transforman tu bienestar",
+      "items": {
+        "nanotechnology": {
+          "title": "Nanotecnología Avanzada",
+          "description": "Nuestros productos utilizan nanotecnología de última generación para una absorción hasta 10 veces mayor que los suplementos tradicionales."
+        },
+        "natural": {
+          "title": "Ingredientes Naturales",
+          "description": "Formulados con ingredientes de la más alta calidad, respaldados por investigación científica."
+        },
+        "results": {
+          "title": "Resultados Comprobados",
+          "description": "Miles de clientes satisfechos respaldan la efectividad de nuestros productos."
+        },
+        "personalized": {
+          "title": "Asesoría Personalizada",
+          "description": "Te guío para encontrar los productos ideales según tus necesidades específicas de salud."
+        },
+        "certified": {
+          "title": "Productos Certificados",
+          "description": "Todos nuestros productos cuentan con certificaciones de calidad y seguridad."
+        },
+        "support": {
+          "title": "Acompañamiento Continuo",
+          "description": "No solo te vendo productos, te acompaño en tu proceso de bienestar integral."
+        }
+      }
+    },
+    "healthConcerns": {
+      "title": "¿Qué problemas puedo ayudarte a abordar?",
+      "subtitle": "Soluciones naturales para tu bienestar",
+      "items": [
+        "Falta de energía y vitalidad",
+        "Problemas digestivos",
+        "Dolor articular y muscular",
+        "Estrés y ansiedad",
+        "Problemas de sueño",
+        "Debilidad del sistema inmune",
+        "Problemas de piel",
+        "Dificultad para concentrarse",
+        "Control de peso",
+        "Envejecimiento prematuro",
+        "Inflamación crónica",
+        "Salud cardiovascular"
+      ]
+    },
+    "testimonials": {
+      "title": "Lo que dicen mis clientes",
+      "subtitle": "Historias reales de transformación",
+      "items": [
+        {
+          "name": "María González",
+          "role": "Cliente desde 2022",
+          "content": "Después de usar Teralife Gotas por 3 meses, mi energía se multiplicó. Ahora puedo hacer todo lo que antes no podía por el cansancio.",
+          "initials": "MG"
+        },
+        {
+          "name": "Carlos Ramírez",
+          "role": "Cliente desde 2023",
+          "content": "El colágeno Teralife cambió mi piel completamente. A mis 50 años, la gente me dice que parezco de 40. ¡Increíble!",
+          "initials": "CR"
+        },
+        {
+          "name": "Ana Martínez",
+          "role": "Cliente desde 2021",
+          "content": "Sufría de dolores articulares terribles. Con el omega y el magnesio de Teralife, recuperé mi movilidad y calidad de vida.",
+          "initials": "AM"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contáctame",
+      "subtitle": "Estoy aquí para asesorarte",
+      "description": "¿Tienes preguntas sobre los productos o quieres una asesoría personalizada? No dudes en contactarme. Estoy aquí para ayudarte a encontrar las soluciones que tu cuerpo necesita.",
+      "whatsappButton": "Escribir por WhatsApp",
+      "whatsappNumber": "+1234567890",
+      "info": {
+        "phone": "Teléfono",
+        "email": "Correo",
+        "location": "Ubicación",
+        "hours": "Horario de Atención",
+        "hoursValue": "Lunes a Viernes: 9am - 6pm\nSábado: 9am - 1pm"
+      },
+      "form": {
+        "title": "Envíame un mensaje",
+        "nameLabel": "Tu nombre",
+        "namePlaceholder": "¿Cómo te llamas?",
+        "emailLabel": "Tu correo",
+        "emailPlaceholder": "tu@email.com",
+        "phoneLabel": "Tu teléfono (opcional)",
+        "phonePlaceholder": "+1 234 567 890",
+        "messageLabel": "Tu mensaje",
+        "messagePlaceholder": "Cuéntame, ¿en qué puedo ayudarte?",
+        "submitButton": "Enviar mensaje",
+        "submitting": "Enviando..."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para transformar tu bienestar?",
+      "subtitle": "Da el primer paso hacia una vida más saludable. Contáctame hoy y descubre cómo Teralife puede ayudarte.",
+      "button": "Comenzar mi transformación"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "subtitle": "Resuelve tus dudas sobre Teralife",
+      "items": [
+        {
+          "question": "¿Qué es la nanotecnología en los productos Teralife?",
+          "answer": "La nanotecnología permite reducir las partículas de los ingredientes activos a tamaños nanométricos, lo que aumenta significativamente su absorción y biodisponibilidad. Esto significa que tu cuerpo aprovecha mucho mejor cada producto."
+        },
+        {
+          "question": "¿En cuánto tiempo veré resultados?",
+          "answer": "Los resultados varían según cada persona y el producto. Generalmente, los clientes reportan mejoras notables entre las 2 a 4 semanas de uso constante. Sin embargo, recomiendo un uso de al menos 3 meses para resultados óptimos."
+        },
+        {
+          "question": "¿Los productos tienen efectos secundarios?",
+          "answer": "Los productos Teralife están formulados con ingredientes naturales y son seguros para el consumo. Sin embargo, siempre recomiendo consultar con tu médico si tienes alguna condición de salud específica o tomas medicamentos."
+        },
+        {
+          "question": "¿Cómo puedo comprar los productos?",
+          "answer": "Puedes contactarme directamente por WhatsApp para recibir asesoría personalizada y realizar tu pedido. Te guiaré para elegir los productos más adecuados para ti."
+        },
+        {
+          "question": "¿Hacen envíos a todo el país?",
+          "answer": "Sí, realizamos envíos a todo el país. Los tiempos y costos de envío varían según la ubicación. Contáctame para más detalles."
+        },
+        {
+          "question": "¿Puedo ser distribuidor de Teralife?",
+          "answer": "¡Claro que sí! Teralife ofrece un excelente plan de negocio para emprendedores. Si te interesa generar ingresos extra mientras ayudas a otros a mejorar su salud, contáctame y te explico cómo unirte al equipo."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Tu bienestar es mi compromiso. Te acompaño en tu camino hacia una vida más saludable con productos de nanotecnología Teralife.",
+      "quickLinks": "Enlaces Rápidos",
+      "products": "Productos",
+      "about": "Sobre Mí",
+      "testimonials": "Testimonios",
+      "contact": "Contacto",
+      "legal": "Legal",
+      "privacy": "Privacidad",
+      "terms": "Términos",
+      "disclaimer": "Aviso Legal",
+      "disclaimerText": "Los productos Teralife son suplementos alimenticios y no pretenden diagnosticar, tratar, curar o prevenir ninguna enfermedad. Consulta a tu médico antes de usar cualquier suplemento.",
+      "copyright": "Todos los derechos reservados.",
+      "madeWith": "Hecho con",
+      "forYourHealth": "para tu salud"
+    }
+  }
+}

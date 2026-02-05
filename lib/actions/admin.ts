@@ -2,14 +2,24 @@
 
 import { createClient } from "@/lib/supabase/server"
 
-interface AddRewardInput {
-  name: string
-  description: string | null
-  points_cost: number
-  stock: number | null
+export async function isAdmin(): Promise<boolean> {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return false
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single()
+
+  return profile?.role === "admin"
 }
 
-export async function addReward(input: AddRewardInput) {
+export async function getAdminStats() {
   const supabase = await createClient()
 
   // Verify admin
@@ -24,89 +34,27 @@ export async function addReward(input: AddRewardInput) {
     .eq("id", user.id)
     .single()
 
-  if (profile?.role !== 'admin') {
+  if (profile?.role !== "admin") {
     return { error: "Admin access required" }
   }
 
-  // Add reward
-  const { error } = await supabase.from("rewards_catalog").insert({
-    name: input.name,
-    description: input.description,
-    points_cost: input.points_cost,
-    stock: input.stock,
-    is_active: true,
-  })
-
-  if (error) {
-    console.error("Error adding reward:", error)
-    return { error: "Failed to add reward" }
-  }
-
-  return { success: true }
-}
-
-export async function toggleRewardStatus(rewardId: string, isActive: boolean) {
-  const supabase = await createClient()
-
-  // Verify admin
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return { error: "Unauthorized" }
-  }
-
-  const { data: profile } = await supabase
+  // Get stats
+  const { count: totalUsers } = await supabase
     .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single()
+    .select("*", { count: "exact", head: true })
 
-  if (profile?.role !== 'admin') {
-    return { error: "Admin access required" }
+  const { count: totalProducts } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+
+  const { count: activeProducts } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("is_active", true)
+
+  return {
+    totalUsers: totalUsers || 0,
+    totalProducts: totalProducts || 0,
+    activeProducts: activeProducts || 0,
   }
-
-  // Update reward status
-  const { error } = await supabase
-    .from("rewards_catalog")
-    .update({ is_active: isActive })
-    .eq("id", rewardId)
-
-  if (error) {
-    console.error("Error updating reward:", error)
-    return { error: "Failed to update reward" }
-  }
-
-  return { success: true }
-}
-
-export async function updateUserPoints(userId: string, points: number) {
-  const supabase = await createClient()
-
-  // Verify admin
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return { error: "Unauthorized" }
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    return { error: "Admin access required" }
-  }
-
-  // Update user points
-  const { error } = await supabase
-    .from("profiles")
-    .update({ points_balance: points })
-    .eq("id", userId)
-
-  if (error) {
-    console.error("Error updating points:", error)
-    return { error: "Failed to update points" }
-  }
-
-  return { success: true }
 }

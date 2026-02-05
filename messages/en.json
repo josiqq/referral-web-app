@@ -75,6 +75,10 @@
       "title": "Teralife Products",
       "subtitle": "Cutting-edge nanotechnology for your integral wellness",
       "viewAll": "View full catalog",
+      "benefitsTitle": "Benefits",
+      "consultButton": "Ask on WhatsApp",
+      "uncategorized": "Other Products",
+      "uncategorizedDescription": "Explore more products from our catalog",
       "items": {
         "teralife_gotas": {
           "name": "Teralife Drops",

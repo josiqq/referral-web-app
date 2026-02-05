@@ -74,7 +74,11 @@
     "products": {
       "title": "Produtos Teralife",
       "subtitle": "Nanotecnologia de ponta para seu bem-estar integral",
-      "viewAll": "Ver catálogo completo",
+      "viewAll": "Ver catalogo completo",
+      "benefitsTitle": "Beneficios",
+      "consultButton": "Consultar pelo WhatsApp",
+      "uncategorized": "Outros Produtos",
+      "uncategorizedDescription": "Explore mais produtos do nosso catalogo",
       "items": {
         "teralife_gotas": {
           "name": "Teralife Gotas",

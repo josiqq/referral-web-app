@@ -14,7 +14,9 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm build:*)",
       "WebFetch(domain:www.gloriaflorezv.com)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:fliphtml5.com)",
+      "Bash(npm run build:*)"
     ]
   }
 }

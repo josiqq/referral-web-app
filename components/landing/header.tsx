@@ -23,19 +23,19 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link href="#about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/#about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             {t("about")}
           </Link>
-          <Link href="#products" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/productos" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             {t("products")}
           </Link>
-          <Link href="#benefits" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/#benefits" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             {t("benefits")}
           </Link>
-          <Link href="#testimonials" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/#testimonials" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             {t("testimonials")}
           </Link>
-          <Link href="#contact" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/contacto" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             {t("contact")}
           </Link>
         </nav>
@@ -70,35 +70,35 @@ export function Header() {
         <div className="border-t border-border bg-background md:hidden">
           <nav className="flex flex-col gap-4 px-4 py-4">
             <Link
-              href="#about"
+              href="/#about"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("about")}
             </Link>
             <Link
-              href="#products"
+              href="/productos"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("products")}
             </Link>
             <Link
-              href="#benefits"
+              href="/#benefits"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("benefits")}
             </Link>
             <Link
-              href="#testimonials"
+              href="/#testimonials"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("testimonials")}
             </Link>
             <Link
-              href="#contact"
+              href="/contacto"
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               onClick={() => setMobileMenuOpen(false)}
             >

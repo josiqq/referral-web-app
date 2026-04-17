@@ -162,49 +162,46 @@ El `middleware.ts` gestiona autenticación e i18n conjuntamente, con soporte com
 - Middleware de autenticación + protección de rutas `/dashboard` y `/admin`
 - Seed con 6 productos de ejemplo
 
-### 🚧 Estructura definida pero páginas sin implementar
-- **`/auth/login`** — Rutas referenciadas en header y middleware pero `app/[locale]/auth/` no existe aún
-- **`/auth/sign-up`** — Igual que login
-- **`/dashboard`** — Ruta protegida, directorio no existe
-- **`/admin`** — Ruta admin, directorio no existe. **Las Server Actions ya están completas**, solo falta la UI
+### ✅ Sistema de referidos implementado (abril 2026)
+
+**Decisiones de diseño:**
+- Los que se unen son **nuevos asesores/distribuidores** (red multinivel)
+- Los códigos los **genera el admin manualmente** desde `/admin/codigos`
+- Cada usuario ve su **upline completo + toda su red hacia abajo**
+
+**Archivos nuevos:**
+- `supabase/migrations/20260418000000_referral_system.sql` — columna `referred_by` en `profiles`, tabla `referral_codes`, funciones SQL `get_downline()` y `consume_referral_code()`
+- `lib/actions/referrals.ts` — `validateReferralCode`, `consumeReferralCode`, `getMyTree`, `listReferralCodes`, `createReferralCode`, `deactivateReferralCode`, `listAllMembers`
+- `app/[locale]/auth/login/page.tsx` + `components/auth/login-form.tsx`
+- `app/[locale]/auth/sign-up/page.tsx` + `components/auth/sign-up-form.tsx` — flujo 2 pasos: código → registro
+- `app/[locale]/dashboard/page.tsx` — árbol jerárquico del usuario
+- `components/dashboard/team-tree.tsx` — árbol visual (upline + me + downline recursivo)
+- `components/dashboard/logout-button.tsx`
+- `app/[locale]/admin/codigos/page.tsx` + `components/admin/referral-codes-panel.tsx` — gestión de códigos
+
+**Flujo sign-up:**
+1. Usuario ingresa a `/auth/sign-up`
+2. Paso 1: ingresa el código `TERA-XXXXXX` → se valida contra `referral_codes` (activo, sin usar)
+3. Paso 2: completa nombre/email/contraseña → se crea auth user → `consume_referral_code()` marca el código como usado y escribe `referred_by` en `profiles`
+
+**Árbol:**
+- Upline: caminando `referred_by` hacia arriba en el servidor
+- Downline: función recursiva SQL `get_downline(root_id)` → árbol en el cliente
+- El usuario es siempre la cabeza visible de su árbol
+
+**Formato de código:** `TERA-XXXXXX` (6 hex chars, generado con `crypto.randomBytes` server-side)
 
 ---
 
 ## Próximos pasos (ordenados por prioridad)
 
-### 1. Páginas de autenticación
-**Archivos a crear:**
-- `app/[locale]/auth/login/page.tsx`
-- `app/[locale]/auth/sign-up/page.tsx`
-
-Usar `@supabase/ssr` con `createClient()` del servidor. El middleware ya maneja las redirecciones post-login hacia `/dashboard`.
-
-### 2. Panel de administración (`/admin`)
-Es la pieza más crítica pendiente. Todas las Server Actions ya están listas en `lib/actions/`.
+### 1. Panel de administración (`/admin`) — productos y categorías
+Las Server Actions ya existen. Falta la UI.
 
 **Archivos a crear:**
 - `app/[locale]/admin/page.tsx` — Dashboard con stats usando `getAdminStats()`
-- `app/[locale]/admin/productos/page.tsx` — Lista de todos los productos con `getAllProducts()`, botones de crear/editar/eliminar
-- `app/[locale]/admin/productos/[id]/page.tsx` — Formulario de edición: datos del producto + gestión de galería de imágenes (subir con `uploadProductImage()`, reordenar, establecer primaria, eliminar)
-- `app/[locale]/admin/categorias/page.tsx` — CRUD de categorías con `getAllCategories()`, `createCategory()`, `updateCategory()`, `deleteCategory()`
-
-### 3. Dashboard de usuario (`/dashboard`)
-Panel para usuarios autenticados no-admin. Su funcionalidad exacta depende de si se implementa el sistema de referidos.
-
-**Archivo a crear:**
-- `app/[locale]/dashboard/page.tsx`
-
-### 4. Sistema de referidos
-El nombre del repo es `referral-web-app` pero la lógica fue removida del schema actual. Los archivos `messages/*.json` ya tienen claves para `pointsBalance`, `points`, `pts`.
-
-**Pendiente definir antes de implementar:**
-- ¿Cómo se genera el código de referido de cada asesor?
-- ¿Los referidos son clientes que compran, o nuevos asesores que se unen?
-- ¿Los puntos tienen valor monetario o son solo ranking?
-
-**Cambios de DB que requerirá:**
-- Agregar `referral_code`, `referred_by`, `points_balance` a `profiles`
-- Nueva tabla `referral_events` o similar
+- `app/[locale]/admin/productos/page.tsx` + `[id]/page.tsx`
+- `app/[locale]/admin/categorias/page.tsx`
 
 ### 5. Páginas legales
 El footer enlaza a `/privacy` y `/terms` que no existen. Crear:

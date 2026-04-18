@@ -195,13 +195,47 @@ El `middleware.ts` gestiona autenticación e i18n conjuntamente, con soporte com
 
 ## Próximos pasos (ordenados por prioridad)
 
-### 1. Panel de administración (`/admin`) — productos y categorías
-Las Server Actions ya existen. Falta la UI.
+### ✅ Panel de administración completo (abril 2026)
 
-**Archivos a crear:**
-- `app/[locale]/admin/page.tsx` — Dashboard con stats usando `getAdminStats()`
-- `app/[locale]/admin/productos/page.tsx` + `[id]/page.tsx`
-- `app/[locale]/admin/categorias/page.tsx`
+**Decisiones de diseño:**
+- El admin panel tiene layout propio (`app/[locale]/admin/layout.tsx`) con sidebar de navegación — no usa el layout de la landing
+- La landing (`hero.tsx`, `contact.tsx`) fue migrada de Client Components con datos hardcodeados a Server Components que leen de `advisor_settings`
+- La tabla `advisor_settings` es un singleton (siempre una fila con id fijo `00000000-0000-0000-0000-000000000001`)
+
+**Archivos nuevos:**
+- `supabase/migrations/20260419000000_advisor_settings.sql` — tabla `advisor_settings`, bucket `advisor-assets`, RLS
+- `lib/actions/settings.ts` — `getAdvisorSettings`, `updateAdvisorSettings`, `uploadAdvisorPhoto`
+- `components/landing/hero.tsx` — ahora Server Component, lee de `advisor_settings`
+- `components/landing/contact.tsx` — ahora Server Component, lee de `advisor_settings`
+- `app/[locale]/admin/layout.tsx` — layout compartido con auth guard + sidebar
+- `app/[locale]/admin/page.tsx` — dashboard con stats
+- `app/[locale]/admin/productos/page.tsx` + `components/admin/products-panel.tsx` — CRUD completo con galería de imágenes por producto
+- `app/[locale]/admin/categorias/page.tsx` + `components/admin/categories-panel.tsx` — CRUD de categorías con banner
+- `app/[locale]/admin/configuracion/page.tsx` + `components/admin/settings-panel.tsx` — foto de perfil, bio, contacto, stats del hero
+- `components/admin/admin-nav.tsx` — sidebar de navegación del panel admin
+
+**Rutas del admin:**
+```
+/admin                → Dashboard con stats
+/admin/productos      → CRUD productos + galería de imágenes
+/admin/categorias     → CRUD categorías + banner
+/admin/codigos        → Códigos de invitación (implementado en sesión anterior)
+/admin/configuracion  → Foto, bio, WhatsApp, email, ubicación, stats hero
+```
+
+**Cómo crear el primer usuario admin:**
+1. Crear usuario en Supabase > Authentication > Users
+2. Copiar el UUID y ejecutar:
+```sql
+UPDATE public.profiles SET role = 'admin' WHERE id = '<uuid>';
+```
+
+**Migraciones a correr (en orden):**
+1. `20260204000000_initial_schema.sql`
+2. `20260204000001_create_storage_bucket.sql`
+3. `20260205000000_add_product_categories.sql`
+4. `20260418000000_referral_system.sql`
+5. `20260419000000_advisor_settings.sql`
 
 ### 5. Páginas legales
 El footer enlaza a `/privacy` y `/terms` que no existen. Crear:

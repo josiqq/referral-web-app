@@ -7,48 +7,35 @@ import { routing } from '@/i18n/routing'
 const intlMiddleware = createIntlMiddleware(routing)
 
 export async function middleware(request: NextRequest) {
+  // 1. Always refresh the session first — this keeps JWT alive
+  const sessionResponse = await updateSession(request)
+
   const pathname = request.nextUrl.pathname
 
-  // Extract locale from pathname
+  // 2. Resolve locale
   const pathnameLocale = routing.locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
   const locale = pathnameLocale || routing.defaultLocale
-
-  // Get pathname without locale prefix
   const pathnameWithoutLocale = pathnameLocale
     ? pathname.replace(`/${pathnameLocale}`, '') || '/'
     : pathname
 
-  // Protected routes (without locale prefix)
-  const protectedRoutes = ['/dashboard', '/admin']
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathnameWithoutLocale.startsWith(route)
-  )
+  const isProtectedRoute = ['/dashboard', '/admin'].some(r => pathnameWithoutLocale.startsWith(r))
+  const isAdminRoute = pathnameWithoutLocale.startsWith('/admin')
+  const isAuthRoute = ['/auth/login', '/auth/sign-up'].some(r => pathnameWithoutLocale.startsWith(r))
 
-  // Admin routes
-  const adminRoutes = ['/admin']
-  const isAdminRoute = adminRoutes.some(route =>
-    pathnameWithoutLocale.startsWith(route)
-  )
-
-  // Auth routes (login, sign-up)
-  const authRoutes = ['/auth/login', '/auth/sign-up']
-  const isAuthRoute = authRoutes.some(route =>
-    pathnameWithoutLocale.startsWith(route)
-  )
-
-  // For protected/auth/admin routes, check authentication
-  if (isProtectedRoute || isAuthRoute || isAdminRoute) {
-    await updateSession(request)
-
+  // 3. Only hit Supabase when we need to check auth
+  if (isProtectedRoute || isAuthRoute) {
+    // Reuse the refreshed cookies from sessionResponse
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {
-            return request.cookies.getAll()
+            // Read from the already-refreshed session response cookies
+            return sessionResponse.cookies.getAll()
           },
           setAll() {},
         },
@@ -57,27 +44,24 @@ export async function middleware(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Build URL with locale
     const buildLocalizedUrl = (path: string) => {
-      if (locale === routing.defaultLocale) {
-        return new URL(path, request.url)
-      }
-      return new URL(`/${locale}${path}`, request.url)
+      const base = locale === routing.defaultLocale ? path : `/${locale}${path}`
+      return new URL(base, request.url)
     }
 
-    // If user is not logged in and trying to access protected route
+    // Not logged in → redirect to login
     if (isProtectedRoute && !user) {
       const loginUrl = buildLocalizedUrl('/auth/login')
       loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale)
       return NextResponse.redirect(loginUrl)
     }
 
-    // If user is logged in and trying to access auth routes
+    // Logged in → redirect away from auth pages
     if (isAuthRoute && user) {
       return NextResponse.redirect(buildLocalizedUrl('/dashboard'))
     }
 
-    // Check for admin routes
+    // Admin route — verify role
     if (isAdminRoute && user) {
       const { data: profile } = await supabase
         .from('profiles')
@@ -91,12 +75,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Apply i18n middleware
-  return intlMiddleware(request)
+  // 4. Run i18n middleware on a clone, then copy refreshed cookies onto it
+  const intlResponse = intlMiddleware(request)
+
+  // If intlMiddleware returned a redirect/rewrite, preserve it but also
+  // carry over the session cookies so they aren't lost
+  if (intlResponse) {
+    sessionResponse.cookies.getAll().forEach(({ name, value, ...opts }) => {
+      intlResponse.cookies.set(name, value, opts as any)
+    })
+    return intlResponse
+  }
+
+  return sessionResponse
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next|_vercel|.*\\..*).*)'
-  ],
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)', '/'],
 }

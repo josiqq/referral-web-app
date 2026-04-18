@@ -11,7 +11,9 @@ export default function LogoutButton() {
   async function handleLogout() {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push("/auth/login")
+    // refresh() re-runs Server Components so the header re-reads the session
+    router.refresh()
+    router.push("/")
   }
 
   return (

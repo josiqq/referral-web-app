@@ -33,24 +33,24 @@ export type TreeNode = {
 }
 
 // ─────────────────────────────────────────────
-// Validate a referral code (public — called before sign-up)
+// Validate a referral code (public — called before sign-up, no auth needed)
+// Uses security definer RPC so RLS doesn't block anonymous callers
 // ─────────────────────────────────────────────
 
 export async function validateReferralCode(
   code: string
-): Promise<{ valid: boolean; assignedTo: string | null }> {
+): Promise<{ valid: boolean }> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
-    .from("referral_codes")
-    .select("id, assigned_to")
-    .eq("code", code.toUpperCase().trim())
-    .eq("is_active", true)
-    .is("used_by", null)
-    .maybeSingle()
+    .rpc("check_referral_code", { p_code: code.toUpperCase().trim() })
 
-  if (error || !data) return { valid: false, assignedTo: null }
-  return { valid: true, assignedTo: data.assigned_to }
+  if (error) {
+    console.error("check_referral_code error:", error)
+    return { valid: false }
+  }
+
+  return { valid: data === true }
 }
 
 // ─────────────────────────────────────────────

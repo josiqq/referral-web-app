@@ -8,15 +8,35 @@ import { ContactPreview } from "@/components/landing/contact-preview"
 import { FAQ } from "@/components/landing/faq"
 import { Footer } from "@/components/landing/footer"
 import { getProductsGroupedByCategory } from "@/lib/actions/products"
+import { createClient } from "@/lib/supabase/server"
 
 export default async function LandingPage() {
-  const { data: groupedProducts } = await getProductsGroupedByCategory()
+  const supabase = await createClient()
 
+  // Read session server-side — always accurate after middleware refreshed JWT
+  const { data: { user } } = await supabase.auth.getUser()
+
+  let userInfo = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, display_name")
+      .eq("id", user.id)
+      .single()
+
+    userInfo = {
+      isLoggedIn: true,
+      isAdmin: profile?.role === "admin",
+      displayName: profile?.display_name ?? null,
+    }
+  }
+
+  const { data: groupedProducts } = await getProductsGroupedByCategory()
   const allProducts = groupedProducts?.flatMap((g) => g.products) ?? []
 
   return (
     <main className="min-h-screen bg-background">
-      <Header />
+      <Header userInfo={userInfo} />
       <Hero />
       <About />
       {allProducts.length > 0 ? (

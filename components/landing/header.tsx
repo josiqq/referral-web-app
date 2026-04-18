@@ -69,7 +69,7 @@ export function Header({ userInfo }: { userInfo: UserInfo }) {
             <>
               {userInfo.isAdmin && (
                 <Button variant="ghost" size="sm" asChild className="gap-1.5">
-                  <Link href="/admin">
+                  <Link href="/dashboard">
                     <ShieldCheck className="h-4 w-4" />
                     Admin
                   </Link>
@@ -139,7 +139,7 @@ export function Header({ userInfo }: { userInfo: UserInfo }) {
                 <>
                   {userInfo.isAdmin && (
                     <Button variant="outline" asChild className="w-full gap-1.5 bg-transparent">
-                      <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                         <ShieldCheck className="h-4 w-4" /> Admin
                       </Link>
                     </Button>

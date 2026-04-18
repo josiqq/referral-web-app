@@ -145,7 +145,7 @@ function ProductForm({
             value={fd.description}
             onChange={e => set("description", e.target.value)}
             rows={3}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none"
           />
         </div>
         <div className="space-y-1.5 sm:col-span-2">
@@ -155,7 +155,7 @@ function ProductForm({
             onChange={e => set("benefits", e.target.value)}
             rows={4}
             placeholder="Fortalece el sistema inmune&#10;Mejora la energía"
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none"
           />
         </div>
         <div className="space-y-1.5">
@@ -179,7 +179,7 @@ function ProductForm({
           <select
             value={fd.category_id}
             onChange={e => set("category_id", e.target.value)}
-            className="w-full h-9 rounded-lg border border-gray-200 px-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full h-9 rounded-lg border border-gray-200 px-3 text-sm bg-white focus:outline-none focus:ring-2"
           >
             <option value="">Sin categoría</option>
             {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -192,7 +192,7 @@ function ProductForm({
       </div>
 
       <div className="flex gap-2 pt-2">
-        <Button onClick={handleSubmit} disabled={!fd.name || saving} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-sm">
+        <Button onClick={handleSubmit} disabled={!fd.name || saving} className="text-white gap-1.5 text-sm">
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
           {saving ? "Guardando..." : "Guardar"}
         </Button>
@@ -290,7 +290,7 @@ function ProductRow({
           <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-blue-600" onClick={() => { setEditing(e => !e); setExpanded(false) }}>
             <Pencil className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-emerald-600" onClick={() => { setExpanded(e => !e); setEditing(false) }}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400" onClick={() => { setExpanded(e => !e); setEditing(false) }}>
             {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500" onClick={handleDelete} disabled={isPending}>
@@ -391,7 +391,7 @@ export default function ProductsPanel({
         <p className="text-sm text-gray-500">{products.length} productos</p>
         <Button
           onClick={() => setCreating(c => !c)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-sm"
+          className="text-white gap-1.5 text-sm"
         >
           {creating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           {creating ? "Cancelar" : "Nuevo producto"}

@@ -11,7 +11,6 @@ export default function LogoutButton() {
   async function handleLogout() {
     const supabase = createClient()
     await supabase.auth.signOut()
-    // refresh() re-runs Server Components so the header re-reads the session
     router.refresh()
     router.push("/")
   }
@@ -21,10 +20,10 @@ export default function LogoutButton() {
       variant="ghost"
       size="sm"
       onClick={handleLogout}
-      className="text-gray-500 hover:text-gray-700 gap-1.5"
+      className="w-full justify-start gap-1.5 text-muted-foreground"
     >
       <LogOut className="w-4 h-4" />
-      <span className="hidden sm:inline">Salir</span>
+      <span>Salir</span>
     </Button>
   )
 }

@@ -112,7 +112,7 @@ export default function SettingsPanel({ initial }: { initial: AdvisorSettings })
               value={s.bio ?? ""}
               onChange={e => set("bio", e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none"
             />
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function SettingsPanel({ initial }: { initial: AdvisorSettings })
       <Button
         onClick={handleSave}
         disabled={isPending}
-        className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-8"
+        className="text-white gap-2 px-8"
       >
         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
         {isPending ? "Guardando..." : "Guardar cambios"}

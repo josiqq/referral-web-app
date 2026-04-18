@@ -1,11 +1,10 @@
-import { redirect } from "@/i18n/routing"
 import { setRequestLocale } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { getMyTree } from "@/lib/actions/referrals"
+import { getAdminStats } from "@/lib/actions/admin"
 import TeamTree from "@/components/dashboard/team-tree"
-import { LogOut, Leaf, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import LogoutButton from "@/components/dashboard/logout-button"
+import { Package, Tag, Users, KeyRound, ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default async function DashboardPage({
   params,
@@ -15,58 +14,116 @@ export default async function DashboardPage({
   const { locale } = await params
   setRequestLocale(locale)
 
-  // Auth guard
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect({ href: "/auth/login", locale })
+  const { data: profile } = await supabase
+    .from("profiles").select("role, display_name").eq("id", user!.id).single()
 
-  // Fetch tree data
-  const { upline, me, downlineFlat, error } = await getMyTree()
+  const isAdmin = profile?.role === "admin"
+
+  const [treeData, statsData] = await Promise.all([
+    getMyTree(),
+    isAdmin ? getAdminStats() : Promise.resolve(null),
+  ])
+
+  const { upline, me, downlineFlat, error: treeError } = treeData
+
+  const adminCards = isAdmin && statsData && "totalProducts" in statsData ? [
+    {
+      href: "/dashboard/productos",
+      icon: Package,
+      label: "Productos",
+      value: statsData.totalProducts,
+      sub: `${statsData.activeProducts} activos`,
+      color: "text-primary",
+      bg: "bg-primary/10",
+    },
+    {
+      href: "/dashboard/categorias",
+      icon: Tag,
+      label: "Categorías",
+      value: "—",
+      sub: "Gestionar",
+      color: "text-secondary",
+      bg: "bg-secondary/10",
+    },
+    {
+      href: "/dashboard/codigos",
+      icon: KeyRound,
+      label: "Códigos",
+      value: "—",
+      sub: "Invitaciones",
+      color: "text-primary",
+      bg: "bg-primary/10",
+    },
+    {
+      href: "/dashboard/configuracion",
+      icon: Users,
+      label: "Config.",
+      value: statsData.totalUsers,
+      sub: "Usuarios totales",
+      color: "text-secondary",
+      bg: "bg-secondary/10",
+    },
+  ] : []
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+    <div className="p-6 md:p-8 max-w-6xl mx-auto">
 
-      {/* Top nav */}
-      <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
-              <Leaf className="w-4 h-4" />
-            </div>
-            <span className="font-bold text-gray-900 text-sm">Teralife</span>
-            <span className="text-gray-300 text-sm mx-1">/</span>
-            <span className="text-sm text-gray-500 flex items-center gap-1">
-              <Users className="w-3.5 h-3.5" /> Mi Equipo
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 hidden sm:block">
-              {me.display_name ?? me.email}
-            </span>
-            <LogoutButton />
-          </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground">
+          Hola, {profile?.display_name ?? me.email} 👋
+        </h1>
+        <p className="text-muted-foreground text-sm mt-1">
+          {isAdmin
+            ? "Panel de administración y red de equipo."
+            : "Tu posición en la red y el equipo que estás construyendo."}
+        </p>
+      </div>
+
+      {/* Admin quick-access cards */}
+      {adminCards.length > 0 && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          {adminCards.map(({ href, icon: Icon, label, value, sub, color, bg }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group bg-card rounded-2xl border border-border shadow-sm p-5 hover:shadow-md hover:border-primary/20 transition-all"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center`}>
+                  <Icon className={`w-4 h-4 ${color}`} />
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <p className="text-xl font-bold text-foreground">{value}</p>
+              <p className="text-xs font-medium text-foreground/70 mt-0.5">{label}</p>
+              <p className="text-xs text-muted-foreground">{sub}</p>
+            </Link>
+          ))}
         </div>
-      </header>
+      )}
 
-      {/* Main content */}
-      <main className="max-w-6xl mx-auto px-4 py-10">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Mi Red de Equipo</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Aquí podés ver tu posición en la red, quién te invitó y todos los asesores que forman parte de tu equipo.
+      {/* Team tree */}
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-6 md:p-8">
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
+            Mi Red de Equipo
+          </h2>
+          <p className="text-muted-foreground text-sm mt-1">
+            Tu upline, tu posición y todos los asesores de tu red hacia abajo.
           </p>
         </div>
 
-        {error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-6 text-sm">
-            Error al cargar el árbol: {error}
+        {treeError ? (
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-xl p-4 text-sm">
+            Error al cargar el árbol: {treeError}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-10">
-            <TeamTree upline={upline} me={me} downlineFlat={downlineFlat} />
-          </div>
+          <TeamTree upline={upline} me={me} downlineFlat={downlineFlat} />
         )}
-      </main>
+      </div>
     </div>
   )
 }

@@ -18,13 +18,9 @@ export default function LoginForm({ locale }: { locale: string }) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // If the user confirmed their email and comes back to login,
-  // consume the pending referral code stored during sign-up
   useEffect(() => {
-    // Check for auth callback (email confirmation redirects here)
     const url = new URL(window.location.href)
-    const type = url.searchParams.get("type")
-    if (type === "signup") {
+    if (url.searchParams.get("type") === "signup") {
       const pendingCode = localStorage.getItem("pending_referral_code")
       const pendingUser = localStorage.getItem("pending_referral_user")
       if (pendingCode && pendingUser) {
@@ -39,18 +35,16 @@ export default function LoginForm({ locale }: { locale: string }) {
   async function handleLogin() {
     setError(null)
     setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
-    const supabase = createClient()
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (signInError || !data.user) {
+        setError(translateAuthError(signInError?.message ?? ""))
+        setLoading(false)
+        return
+      }
 
-    if (error) {
-      setError(translateAuthError(error.message))
-      setLoading(false)
-      return
-    }
-
-    // Consume any pending referral code (edge case: user confirmed email then logged in)
-    if (data.user && typeof window !== "undefined") {
       const pendingCode = localStorage.getItem("pending_referral_code")
       const pendingUser = localStorage.getItem("pending_referral_user")
       if (pendingCode && pendingUser === data.user.id) {
@@ -58,39 +52,34 @@ export default function LoginForm({ locale }: { locale: string }) {
         localStorage.removeItem("pending_referral_code")
         localStorage.removeItem("pending_referral_user")
       }
-    }
 
-    // Check role to redirect admin directly to /admin
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user!.id)
-      .single()
+      const params = new URLSearchParams(window.location.search)
+      const redirectTo = params.get("redirectTo")
+      router.push(redirectTo ?? "/dashboard")
 
-    if (profile?.role === "admin") {
-      router.push("/admin")
-    } else {
-      router.push("/dashboard")
+    } catch (err) {
+      console.error("Login error:", err)
+      setError("Ocurrió un error inesperado. Intentá de nuevo.")
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 text-white mb-4 shadow-lg">
-            <Leaf className="w-7 h-7" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary mb-4 shadow-lg">
+            <Leaf className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Bienvenido de vuelta</h1>
-          <p className="text-gray-500 mt-1 text-sm">Ingresá a tu panel de Teralife</p>
+          <h1 className="text-2xl font-bold text-foreground">Bienvenido de vuelta</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Ingresá a tu panel de Teralife</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-5">
+        <div className="bg-card rounded-2xl shadow-xl border border-border p-8 space-y-5">
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</Label>
+            <Label htmlFor="email" className="text-sm font-medium">Correo electrónico</Label>
             <Input
               id="email"
               type="email"
@@ -104,7 +93,7 @@ export default function LoginForm({ locale }: { locale: string }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</Label>
+            <Label htmlFor="password" className="text-sm font-medium">Contraseña</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -118,7 +107,7 @@ export default function LoginForm({ locale }: { locale: string }) {
               <button
                 type="button"
                 onClick={() => setShowPassword(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -127,7 +116,7 @@ export default function LoginForm({ locale }: { locale: string }) {
           </div>
 
           {error && (
-            <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+            <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg px-4 py-3">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               {error}
             </div>
@@ -136,7 +125,7 @@ export default function LoginForm({ locale }: { locale: string }) {
           <Button
             onClick={handleLogin}
             disabled={loading || !email || !password}
-            className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg"
+            className="w-full h-11"
           >
             {loading
               ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Ingresando...</>
@@ -144,9 +133,9 @@ export default function LoginForm({ locale }: { locale: string }) {
             }
           </Button>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-muted-foreground">
             ¿No tenés cuenta?{" "}
-            <Link href="/auth/sign-up" className="text-emerald-600 hover:text-emerald-700 font-medium">
+            <Link href="/auth/sign-up" className="text-primary hover:text-primary/80 font-medium">
               Únete al Equipo
             </Link>
           </p>

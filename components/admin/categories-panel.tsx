@@ -122,7 +122,7 @@ function CategoryForm({
         </div>
       </div>
       <div className="flex gap-2 pt-2">
-        <Button onClick={handleSubmit} disabled={!fd.name || saving} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-sm">
+        <Button onClick={handleSubmit} disabled={!fd.name || saving} className="text-white gap-1.5 text-sm">
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
           {saving ? "Guardando..." : "Guardar"}
         </Button>
@@ -224,7 +224,7 @@ export default function CategoriesPanel({ initialCategories }: { initialCategori
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">{categories.length} categorías</p>
-        <Button onClick={() => setCreating(c => !c)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-sm">
+        <Button onClick={() => setCreating(c => !c)} className=" text-white gap-1.5 text-sm">
           {creating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           {creating ? "Cancelar" : "Nueva categoría"}
         </Button>

@@ -1,4 +1,3 @@
-import { updateSession } from '@/lib/supabase/proxy'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import createIntlMiddleware from 'next-intl/middleware'
@@ -7,12 +6,9 @@ import { routing } from '@/i18n/routing'
 const intlMiddleware = createIntlMiddleware(routing)
 
 export async function middleware(request: NextRequest) {
-  // 1. Always refresh the session first — this keeps JWT alive
-  const sessionResponse = await updateSession(request)
-
   const pathname = request.nextUrl.pathname
 
-  // 2. Resolve locale
+  // ── 1. Resolve locale ──────────────────────────────────────────────────────
   const pathnameLocale = routing.locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
@@ -21,73 +17,75 @@ export async function middleware(request: NextRequest) {
     ? pathname.replace(`/${pathnameLocale}`, '') || '/'
     : pathname
 
-  const isProtectedRoute = ['/dashboard', '/admin'].some(r => pathnameWithoutLocale.startsWith(r))
-  const isAdminRoute = pathnameWithoutLocale.startsWith('/admin')
-  const isAuthRoute = ['/auth/login', '/auth/sign-up'].some(r => pathnameWithoutLocale.startsWith(r))
+  const isDashboardRoute = pathnameWithoutLocale.startsWith('/dashboard')
+  const isAuthRoute = ['/auth/login', '/auth/sign-up'].some(r =>
+    pathnameWithoutLocale.startsWith(r)
+  )
+  // Legacy /admin redirect → /dashboard
+  const isLegacyAdmin = pathnameWithoutLocale.startsWith('/admin')
 
-  // 3. Only hit Supabase when we need to check auth
-  if (isProtectedRoute || isAuthRoute) {
-    // Reuse the refreshed cookies from sessionResponse
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            // Read from the already-refreshed session response cookies
-            return sessionResponse.cookies.getAll()
-          },
-          setAll() {},
+  // ── 2. Build response + Supabase client that refreshes JWT ─────────────────
+  let response = NextResponse.next({ request })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
         },
-      }
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-
-    const buildLocalizedUrl = (path: string) => {
-      const base = locale === routing.defaultLocale ? path : `/${locale}${path}`
-      return new URL(base, request.url)
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          )
+          response = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
     }
+  )
 
-    // Not logged in → redirect to login
-    if (isProtectedRoute && !user) {
-      const loginUrl = buildLocalizedUrl('/auth/login')
-      loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale)
-      return NextResponse.redirect(loginUrl)
-    }
+  // IMPORTANT: always call getUser() — refreshes the JWT when needed
+  const { data: { user } } = await supabase.auth.getUser()
 
-    // Logged in → redirect away from auth pages
-    if (isAuthRoute && user) {
-      return NextResponse.redirect(buildLocalizedUrl('/dashboard'))
-    }
-
-    // Admin route — verify role
-    if (isAdminRoute && user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (profile?.role !== 'admin') {
-        return NextResponse.redirect(buildLocalizedUrl('/dashboard'))
-      }
-    }
+  const buildUrl = (path: string) => {
+    const base = locale === routing.defaultLocale ? path : `/${locale}${path}`
+    return new URL(base, request.url)
   }
 
-  // 4. Run i18n middleware on a clone, then copy refreshed cookies onto it
-  const intlResponse = intlMiddleware(request)
+  // ── 3. Redirect legacy /admin/* → /dashboard/* ────────────────────────────
+  if (isLegacyAdmin) {
+    const newPath = pathnameWithoutLocale.replace('/admin', '/dashboard')
+    return NextResponse.redirect(buildUrl(newPath))
+  }
 
-  // If intlMiddleware returned a redirect/rewrite, preserve it but also
-  // carry over the session cookies so they aren't lost
+  // ── 4. Auth guards ─────────────────────────────────────────────────────────
+
+  // Not logged in → bounce to login
+  if (isDashboardRoute && !user) {
+    const loginUrl = buildUrl('/auth/login')
+    loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  // Logged in → never show auth pages, send to dashboard
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(buildUrl('/dashboard'))
+  }
+
+  // ── 5. Apply i18n middleware, carry over auth cookies ─────────────────────
+  const intlResponse = intlMiddleware(request)
   if (intlResponse) {
-    sessionResponse.cookies.getAll().forEach(({ name, value, ...opts }) => {
+    response.cookies.getAll().forEach(({ name, value, ...opts }) => {
       intlResponse.cookies.set(name, value, opts as any)
     })
     return intlResponse
   }
 
-  return sessionResponse
+  return response
 }
 
 export const config = {

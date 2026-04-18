@@ -3,6 +3,7 @@ import { Hero } from "@/components/landing/hero"
 import { About } from "@/components/landing/about"
 import { ProductsPreview, ProductsPreviewStatic } from "@/components/landing/products-preview"
 import { Benefits } from "@/components/landing/benefits"
+import { Sponsors } from "@/components/landing/sponsors"
 import { Testimonials } from "@/components/landing/testimonials"
 import { ContactPreview } from "@/components/landing/contact-preview"
 import { FAQ } from "@/components/landing/faq"
@@ -45,6 +46,7 @@ export default async function LandingPage() {
         <ProductsPreviewStatic />
       )}
       <Benefits />
+      <Sponsors />
       <Testimonials />
       <ContactPreview />
       <FAQ />

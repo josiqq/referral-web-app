@@ -34,6 +34,10 @@ export type AdvisorSettings = {
   about_mission: string | null
   about_photo_url: string | null
   about_values: AboutValue[] | null
+  // Sponsors section
+  sponsors_enabled: boolean | null
+  sponsors_title: string | null
+  sponsors_subtitle: string | null
   updated_at: string
 }
 

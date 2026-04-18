@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Leaf, Users, Package, Tag, KeyRound,
-  Settings, ChevronRight, Menu, X, UserCircle2,
+  Settings, ChevronRight, Menu, X, UserCircle2, Handshake,
 } from "lucide-react"
 import LogoutButton from "@/components/dashboard/logout-button"
 import { useState } from "react"
@@ -23,6 +23,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/categorias", label: "Categorías", icon: Tag, adminOnly: true },
   { href: "/dashboard/codigos", label: "Códigos", icon: KeyRound, adminOnly: true },
   { href: "/dashboard/about", label: "Sobre Mí", icon: UserCircle2, adminOnly: true },
+  { href: "/dashboard/sponsors", label: "Patrocinadores", icon: Handshake, adminOnly: true },
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings, adminOnly: true },
 ]
 
